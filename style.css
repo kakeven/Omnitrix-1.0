@@ -1,0 +1,313 @@
+*{box-sizing:border-box}
+body{
+  margin:0; height:100vh;
+  display:grid; place-items:center;
+  background:#050607; color:#46ff7b;
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+}
+
+.omni{
+  position:relative;
+  width:min(90vw,360px);
+  aspect-ratio:1/1;
+  border-radius:50%;
+}
+
+
+
+
+
+
+.alien-ring{
+  position:absolute;
+  inset: 1.23%;
+  border-radius:50%;
+  pointer-events:none;
+  overflow:hidden;
+
+  /* 🔥 recorte fixo da metade superior */
+  clip-path: ellipse(100% 50% at 50% 0%);
+
+  /* 🔥 fundo da parte inferior */
+  background: radial-gradient(
+    circle at center,
+    rgba(0,60,15,0.9) 55%,
+    rgba(0,20,5,0.95) 100%
+  );
+
+  /* 🔥 mantém só a coroa (entre círculo interno e externo) */
+  -webkit-mask: radial-gradient(circle,
+      transparent 0 34%,
+      #000 34% 109%);
+          mask: radial-gradient(circle,
+      transparent 0 34%,
+      #000 34% 100%);
+}
+.alien-ring{
+  box-shadow:
+    0 -8px 30px rgba(70,255,123,.35),
+    inset 0 6px 20px rgba(70,255,123,.15);
+}
+
+.alien-ring::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  pointer-events:none;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,60,15,0.95) 0%,
+    rgba(0,50,10,0.85) 35%,
+    transparent 50%
+  );
+}
+
+
+.ring{
+  position:absolute; inset:0;
+  border-radius:50%;
+  border:4px solid rgba(70,255,123,.5);
+  box-shadow:0 0 25px rgba(70,255,123,.18);
+}
+
+
+.dial{
+  position:absolute;
+  inset: 0;
+  border-radius:50%;
+
+  background-image: url("./images/icone_12.png");
+  background-repeat: no-repeat;
+  background-position: 49.3% 53.5%;/* Ajuste fino do centro visual do PNG (imagem não é perfeitamente centrada) */
+
+  /* zoom pra empurrar os ícones pra borda */
+  background-size: 255%;
+
+  transform: rotate(0deg);
+  transition: transform 120ms linear;
+  filter: drop-shadow(0 0 18px rgba(70,255,123,.18)) saturate(1.2);
+
+  /* ✅ aqui está o segredo: só mostra uma coroa, esconde o centro */
+  -webkit-mask: radial-gradient(circle, transparent 0 20%, #000 25% 100%);
+          mask: radial-gradient(circle, transparent 0 20%, #000 25% 100%);
+
+ 
+  
+}
+
+.dial::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(70,255,123,.10) 0 1px,
+    rgba(0,0,0,0) 2px 6px
+  );
+  mix-blend-mode: screen;
+  opacity: .18;
+  pointer-events:none;
+}
+
+.touch{
+  position:absolute;
+  inset:26%;
+  border-radius:50%;
+  border:2px solid rgba(70,255,123,.45);
+  background: rgba(70,255,123,.08);
+  /* importante pro mobile: não deixar o browser “rolar” a página com o gesto */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+}
+
+.omni.selecting .dial{
+  box-shadow:0 0 18px rgba(70,255,123,.22);
+}
+.omni.selected .touch{
+  border-color: rgba(70,255,123,.9);
+  box-shadow:0 0 22px rgba(70,255,123,.20);
+}
+
+.status{
+  position:absolute;
+  left:50%; bottom:8%;
+  transform:translateX(-50%);
+  width:90%;
+  text-align:center;
+  opacity:.9;
+}
+
+
+.ring { z-index: 1; }
+.alien-ring { z-index: 2; }
+.touch { z-index: 3; }
+.status { z-index: 4; }
+
+.touch{
+  border: 3px solid rgba(70,255,123,.85);
+}
+
+.ring{
+  background: radial-gradient(circle, rgba(0,0,0,0) 0 55%, rgba(70,255,123,.08) 70% 100%);
+}
+
+
+.tick{
+  position:absolute;
+  left:50%;
+  top:6%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 22px;
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(to bottom, rgba(70,255,123,0), rgba(70,255,123,.95));
+  filter: drop-shadow(0 0 12px rgba(70,255,123,.7));
+  z-index: 5;
+  pointer-events:none;
+}
+
+.tick::after{
+  content:"";
+  position:absolute;
+
+  /* 🔥 em vez de top em px, usamos % e centralizamos */
+  left:50%;
+  top: 135%;                 /* ajuste fino aqui */
+  transform: translate(-50%, -50%);
+
+  width: 64px;
+  height: 64px;
+  border-radius:50%;
+  border: 2px solid rgba(70,255,123,.25);
+  box-shadow: 0 0 18px rgba(70,255,123,.18);
+}
+
+.select-window{
+  position:absolute;
+  left:36.5%;
+  top:2%;
+  transform: translate(-50%, -92%); /* ajusta altura aqui */
+
+  width: 26%;
+  height: 25%;
+
+  clip-path: polygon(
+    5% 0%,
+    95% 0%,
+    70% 100%,
+    30% 100%
+  );
+
+
+
+  background: linear-gradient(
+    to bottom,
+    rgba(70,255,123,0.35),
+    rgba(70,255,123,0.06)
+  );
+
+  box-shadow:
+    0 0 18px rgba(70,255,123,0.25),
+    0 0 34px rgba(70,255,123,0.12);
+
+  /* fade em cima e embaixo */
+-webkit-mask: linear-gradient(
+  to bottom,
+  transparent 0%,
+  #000 20%,
+  #000 80%,
+  transparent 100%
+);
+
+mask: linear-gradient(
+  to bottom,
+  transparent 0%,
+  #000 20%,
+  #000 80%,
+  transparent 100%
+);
+
+
+  z-index: 6;
+  pointer-events: none;
+}
+
+
+/* ... todo o seu CSS que já existe ... */
+
+/* ===== camada de fundo ===== */
+/* garante que #omni crie um stacking context */
+.omni{
+  position: relative;
+  
+  z-index: 0;
+}
+
+/* fundo fica atrás sem mexer no resto */
+.omni-bg{
+  position: absolute;
+  inset: 0;
+  background-image: url("./images/omnitrix_de_frente.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; /* depois ajustamos */
+  opacity: 0.35;
+  pointer-events: none;
+
+  z-index: -1; /* <- a chave */
+}
+
+
+/* ===== CÍRCULO ESCONDIDO POR PADRÃO ===== */
+
+.alien-ring {
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.omni.open .alien-ring {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ring,
+.touch,
+.select-window{
+  opacity: 0;
+}
+
+
+.omni.open .ring,
+.omni.open .select-window,
+.omni.open .touch {
+  opacity: 1;
+  transform: scale(1);
+}
+/* ===== ANIMAÇÃO DE ATIVAÇÃO ===== */
+
+.omni.activating {
+  box-shadow: 0 0 40px rgba(70,255,123,.6);
+}
+
+.omni.activating .dial {
+  animation: pulse 400ms ease;
+}
+
+
+@keyframes pulse {
+  0%   { transform: scale(0.9); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.omni.ready .touch {
+  box-shadow: 0 0 30px rgba(70,255,123,.5);
+}
+
