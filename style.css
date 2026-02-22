@@ -418,7 +418,7 @@ body {
   }
   
   .status {
-    bottom: -270px;       /* Ajusta o status para ficar abaixo do painel */
+    top: -100px;       /* Ajusta o status para ficar abaixo do painel */
   }
 
   .recursos {
