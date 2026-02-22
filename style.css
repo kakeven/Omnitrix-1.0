@@ -374,12 +374,14 @@ body {
 
 
 /* Posicionamento diferente por tamanho de tela */
+/* Posicionamento diferente por tamanho de tela */
 @media (min-width: 1200px) {
   .rpg-panel {
     top: 50%;
     left: 110%;
     transform: translateY(-50%);
     width: 280px;
+    z-index: 20; /* Mantém alto porque está ao lado */
   }
   
   .omni {
@@ -392,26 +394,43 @@ body {
     top: -140px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 5; /* Reduz para ficar atrás do Omnitrix */
   }
   
   .status {
     bottom: -180px;
   }
+  
+  /* Garante que o touch pad fique acessível */
+  .touch {
+    z-index: 10;
+  }
 }
 
 @media (max-width: 767px) {
   .rpg-panel {
-    top: -140px;
+    top: auto;
+    bottom: -255px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px;
+    z-index: 1; /* Reduz para ficar atrás do Omnitrix */
   }
   
+  .status {
+    bottom: -270px;       /* Ajusta o status para ficar abaixo do painel */
+  }
+
   .recursos {
     margin-bottom: 10px;
   }
   
   .valor {
     font-size: 24px;
+  }
+  
+  /* Garante que o touch pad fique acessível */
+  .touch {
+    z-index: 10;
   }
 }
