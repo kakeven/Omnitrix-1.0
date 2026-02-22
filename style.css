@@ -427,7 +427,7 @@ body {
   transform: none !important;
   top: auto !important;
   left: auto !important;
-  margin: 20px 0;
+  margin: 120px 0 20px 0;
   width: 100%;
   max-width: 300px;
 }
