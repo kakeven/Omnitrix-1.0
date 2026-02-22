@@ -180,8 +180,35 @@ body {
   text-shadow: 0 0 10px rgba(70,255,123,0.5);
 }
 
+/* Tick (indicador do topo) */
+.tick {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 22px;
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(to bottom, rgba(70,255,123,0), rgba(70,255,123,.95));
+  filter: drop-shadow(0 0 12px rgba(70,255,123,.7));
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
 
-
+.tick::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 135%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(70,255,123,.25);
+  box-shadow: 0 0 18px rgba(70,255,123,.18);
+}
 
 /* Estados de visibilidade */
 .omni.open .ring,
