@@ -419,8 +419,8 @@ body {
   /* Painel RPG - AGORA FORA DO OMNI */
   .rpg-panel {
     position: relative; /* muda de absolute para relative */
-    top: auto;
-    left: auto;
+    top: 10%;
+    left: 50%;
     transform: none;
     width: 100%;
     max-width: 320px;
