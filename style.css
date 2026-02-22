@@ -403,55 +403,64 @@ body {
   body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px 10px;
+    justify-content: center;
+    align-items: center;
     height: auto;
     min-height: 100vh;
+    padding: 20px 10px;
   }
   
   .omni {
-    width: min(80vw, 300px);
-    margin: 20px auto;
+    width: min(80vw, 280px);
+    margin: 0 auto 20px auto;
   }
   
-  /* Painel RPG movido para baixo */
+  /* Painel RPG abaixo do Omnitrix */
   .rpg-panel {
     position: relative;
     top: auto;
     left: auto;
     transform: none;
     width: 100%;
-    max-width: 400px;
-    margin: 30px auto 20px;
-    border-radius: 20px;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 12px;
   }
   
-  /* Altura máxima com scroll */
   .recursos {
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 5px;
-  }
-  
-  .carga-display, .pilha-display {
-    padding: 15px 0;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
   }
   
   .valor {
-    font-size: 32px;
+    font-size: 24px;
+  }
+  
+  .rotulo {
+    font-size: 12px;
   }
   
   .alien-info {
-    margin: 15px 0;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .alien-icone {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .alien-nome {
+    font-size: 14px;
   }
   
   .botoes-rpg {
-    flex-wrap: wrap;
+    gap: 8px;
   }
   
   .btn-rpg {
-    min-width: 140px;
-    flex: 1 1 auto;
+    padding: 8px 5px;
+    font-size: 12px;
   }
   
   .status {
@@ -459,18 +468,9 @@ body {
     bottom: auto;
     left: auto;
     transform: none;
-    margin: 20px auto 10px;
+    margin: 15px auto 5px;
     width: 100%;
-    max-width: 400px;
-    background: rgba(0,0,0,0.8);
-    padding: 12px;
-    border-radius: 30px;
-    font-size: 14px;
-  }
-  
-  /* Container principal com scroll se necessário */
-  body {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-width: 320px;
+    font-size: 12px;
   }
 }
