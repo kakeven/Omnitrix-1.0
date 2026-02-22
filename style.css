@@ -401,73 +401,71 @@ body {
 
 /* Para celulares em geral (baseado na altura) */
 @media (max-height: 1200px) and (orientation: portrait) {
+
   body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: auto;
     min-height: 100vh;
     padding: 15px 10px;
   }
-  
+
+  /* Mantém o arco superior sem distorcer o círculo */
+  .alien-ring {
+    clip-path: inset(0 0 50% 0 round 50%);
+  }
+
   .omni {
     width: min(70vw, 260px);
-    margin: 0 auto 15px auto;
+    margin: 20px 0;
   }
-  
-  /* Painel RPG abaixo */
+
   .rpg-panel {
     position: relative;
-    top: auto;
-    left: auto;
-    transform: none;
     width: 100%;
     max-width: 300px;
-    margin: 200px auto 15px auto;
+    margin: 20px auto;
     padding: 12px;
   }
-  
+
   .recursos {
     margin-bottom: 10px;
   }
-  
+
   .valor {
     font-size: 24px;
   }
-  
+
   .rotulo {
     font-size: 12px;
   }
-  
+
   .alien-info {
     padding: 8px;
     margin-bottom: 10px;
   }
-  
+
   .alien-icone {
     width: 40px;
     height: 40px;
   }
-  
+
   .alien-nome {
     font-size: 14px;
   }
-  
+
   .botoes-rpg {
     gap: 6px;
   }
-  
+
   .btn-rpg {
     padding: 8px 4px;
     font-size: 11px;
   }
-  
+
   .status {
     position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
     margin: 10px auto;
     width: 100%;
     max-width: 300px;
