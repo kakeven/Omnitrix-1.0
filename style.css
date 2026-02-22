@@ -422,12 +422,14 @@ body {
   }
 
   .rpg-panel {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    margin: 20px auto;
-    padding: 12px;
-  }
+  position: static !important;
+  transform: none !important;
+  top: auto !important;
+  left: auto !important;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 300px;
+}
 
   .recursos {
     margin-bottom: 10px;
