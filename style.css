@@ -403,8 +403,8 @@ body {
   body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: flex-start;
     height: auto;
     min-height: 100vh;
     padding: 20px 10px;
@@ -413,54 +413,20 @@ body {
   .omni {
     width: min(80vw, 280px);
     margin: 0 auto 20px auto;
+    position: relative; /* mantém relativo */
   }
   
-  /* Painel RPG abaixo do Omnitrix */
+  /* Painel RPG - AGORA FORA DO OMNI */
   .rpg-panel {
-    position: relative;
+    position: relative; /* muda de absolute para relative */
     top: auto;
     left: auto;
     transform: none;
     width: 100%;
     max-width: 320px;
-    margin: 0 auto;
-    padding: 12px;
-  }
-  
-  .recursos {
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-  }
-  
-  .valor {
-    font-size: 24px;
-  }
-  
-  .rotulo {
-    font-size: 12px;
-  }
-  
-  .alien-info {
-    padding: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .alien-icone {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .alien-nome {
-    font-size: 14px;
-  }
-  
-  .botoes-rpg {
-    gap: 8px;
-  }
-  
-  .btn-rpg {
-    padding: 8px 5px;
-    font-size: 12px;
+    margin: 80px auto 20px auto; /* empurra para baixo */
+    padding: 15px;
+    z-index: 10;
   }
   
   .status {
@@ -468,9 +434,13 @@ body {
     bottom: auto;
     left: auto;
     transform: none;
-    margin: 15px auto 5px;
+    margin: 10px auto;
     width: 100%;
     max-width: 320px;
-    font-size: 12px;
+  }
+  
+  /* Remove posicionamentos absolutos que atrapalham */
+  .ring, .alien-ring, .touch, .select-window {
+    position: absolute; /* mantém dentro do omni */
   }
 }
