@@ -399,7 +399,8 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+/* Para celulares em geral (baseado na altura) */
+@media (max-height: 1200px) and (orientation: portrait) {
   body {
     display: flex;
     flex-direction: column;
@@ -407,26 +408,59 @@ body {
     justify-content: flex-start;
     height: auto;
     min-height: 100vh;
-    padding: 20px 10px;
+    padding: 15px 10px;
   }
   
   .omni {
-    width: min(80vw, 280px);
-    margin: 0 auto 20px auto;
-    position: relative; /* mantém relativo */
+    width: min(70vw, 260px);
+    margin: 0 auto 15px auto;
   }
   
-  /* Painel RPG - AGORA FORA DO OMNI */
+  /* Painel RPG abaixo */
   .rpg-panel {
-    position: relative; /* muda de absolute para relative */
-    top: 10%;
-    left: 50%;
+    position: relative;
+    top: auto;
+    left: auto;
     transform: none;
     width: 100%;
-    max-width: 320px;
-    margin: 80px auto 20px auto; /* empurra para baixo */
-    padding: 15px;
-    z-index: 10;
+    max-width: 300px;
+    margin: 80px auto 15px auto;
+    padding: 12px;
+  }
+  
+  .recursos {
+    margin-bottom: 10px;
+  }
+  
+  .valor {
+    font-size: 24px;
+  }
+  
+  .rotulo {
+    font-size: 12px;
+  }
+  
+  .alien-info {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .alien-icone {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .alien-nome {
+    font-size: 14px;
+  }
+  
+  .botoes-rpg {
+    gap: 6px;
+  }
+  
+  .btn-rpg {
+    padding: 8px 4px;
+    font-size: 11px;
   }
   
   .status {
@@ -436,11 +470,7 @@ body {
     transform: none;
     margin: 10px auto;
     width: 100%;
-    max-width: 320px;
-  }
-  
-  /* Remove posicionamentos absolutos que atrapalham */
-  .ring, .alien-ring, .touch, .select-window {
-    position: absolute; /* mantém dentro do omni */
+    max-width: 300px;
+    font-size: 12px;
   }
 }
