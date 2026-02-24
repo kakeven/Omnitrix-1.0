@@ -10,6 +10,9 @@ const alienIcone = document.getElementById("alienIcone");
 const alienNome = document.getElementById("alienNome");
 const btnNovaCena = document.getElementById("btnNovaCena");
 const btnFormaHumana = document.getElementById("btnFormaHumana");
+const btnTemaVerde = document.getElementById("btnTemaVerde");
+const btnTemaCiano = document.getElementById("btnTemaCiano");
+const btnTemaRoxo = document.getElementById("btnTemaRoxo");
 
 const ALIEN_NAMES = [
   "Diamante",      // índice 0
@@ -125,6 +128,31 @@ function stopSound(nome) {
 
 
 
+
+function aplicarTema(tema) {
+  omni.classList.remove('tema-ciano', 'tema-roxo');
+
+  if (tema === 'ciano') {
+    omni.classList.add('tema-ciano');
+  } else if (tema === 'roxo') {
+    omni.classList.add('tema-roxo');
+  }
+
+  [btnTemaVerde, btnTemaCiano, btnTemaRoxo].forEach(btn => btn.classList.remove('ativo'));
+  if (tema === 'ciano') btnTemaCiano.classList.add('ativo');
+  else if (tema === 'roxo') btnTemaRoxo.classList.add('ativo');
+  else btnTemaVerde.classList.add('ativo');
+
+  setStatus(`Tema ${tema.charAt(0).toUpperCase() + tema.slice(1)} aplicado`);
+}
+
+function piscarDescargaTempo() {
+  omni.classList.remove('descarga-piscando');
+  void omni.offsetWidth;
+  omni.classList.add('descarga-piscando');
+  setTimeout(() => omni.classList.remove('descarga-piscando'), 1200);
+}
+
 // ===== FUNÇÕES RPG =====
 function atualizarInterfaceRPG() {
   cargaValor.textContent = carga;
@@ -206,17 +234,18 @@ function toggleFailSafe() {
 function atualizarAparenciaOmnitrix() {
   // Remove classes de influência anteriores
   omni.classList.remove('carga-baixa');
-  
+
   if (transformado) {
     omni.classList.add('transformado');
-    
+
+    // Classe de supremo deve permanecer ativa enquanto modoAtual for supremo
+    omni.classList.toggle('supremo', modoAtual === 'supremo');
+
     // Influência externa: carga baixa
     if (carga <= 3) {
       omni.classList.add('carga-baixa');
     }
-    
-    // Se for supremo, já tem a classe adicionada no momento da transformação
-    
+
   } else {
     omni.classList.remove('transformado', 'supremo', 'carga-baixa');
   }
@@ -360,6 +389,7 @@ function novaCena() {
   if (transformado) {
     carga = Math.max(0, carga - pilha);
     setStatus(`Nova cena transformado! Carga: ${carga} (${pilha} pilhas descontadas)`);
+    piscarDescargaTempo();
   } else {
     if(carga<15){
       carga += 1;
@@ -567,10 +597,6 @@ omni.addEventListener("click", (e) => {
         playSound('supremo');
         setStatus(`SUPREMO: ${ALIEN_NAMES[selectedIndex]} | -${resultado.custo} carga, +${resultado.ganhoPilha} pilha`);
         
-        // Efeito visual para supremo
-        omni.classList.add("supremo");
-        setTimeout(() => omni.classList.remove("supremo"), 1000);
-        
       } else {
         playSound('transformar');
         setStatus(`TRANSFORMAÇÃO: ${ALIEN_NAMES[selectedIndex]} | -${resultado.custo} carga, +${resultado.ganhoPilha} pilha`);
@@ -681,4 +707,19 @@ const btnFailSafe = document.getElementById("btnFailSafe");
 btnFailSafe.addEventListener("click", (e) => {
   e.stopPropagation();
   toggleFailSafe();
+});
+
+btnTemaVerde.addEventListener("click", (e) => {
+  e.stopPropagation();
+  aplicarTema('verde');
+});
+
+btnTemaCiano.addEventListener("click", (e) => {
+  e.stopPropagation();
+  aplicarTema('ciano');
+});
+
+btnTemaRoxo.addEventListener("click", (e) => {
+  e.stopPropagation();
+  aplicarTema('roxo');
 });
