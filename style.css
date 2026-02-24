@@ -18,6 +18,9 @@ body {
   aspect-ratio: 1/1;
   border-radius: 50%;
   z-index: 0;
+  --tema-hue: 0deg;
+  --tema-saturate: 1;
+  --descarga-rgb: 70,255,123;
 }
 
 /* Camada de fundo */
@@ -31,6 +34,25 @@ body {
   opacity: 0.35;
   pointer-events: none;
   z-index: 0;
+}
+
+
+.omni-bg,
+.alien-ring {
+  filter: hue-rotate(var(--tema-hue)) saturate(var(--tema-saturate));
+  transition: filter 250ms ease, opacity 200ms ease, transform 200ms ease;
+}
+
+.omni.tema-ciano {
+  --tema-hue: 45deg;
+  --tema-saturate: 1.15;
+  --descarga-rgb: 70,220,255;
+}
+
+.omni.tema-roxo {
+  --tema-hue: 135deg;
+  --tema-saturate: 1.2;
+  --descarga-rgb: 180,120,255;
 }
 
 /* Anel externo */
@@ -54,14 +76,30 @@ body {
   pointer-events: none;
   overflow: hidden;
   clip-path: ellipse(100% 50% at 50% 0%);
-  background: radial-gradient(circle at center, rgba(0,60,15,0.9) 55%, rgba(0,20,5,0.95) 100%);
+  background: radial-gradient(circle at center, rgba(20,120,45,0.92) 52%, rgba(10,70,25,0.96) 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 34% 109%);
   mask: radial-gradient(circle, transparent 0 34%, #000 34% 100%);
-  box-shadow: 0 -8px 30px rgba(70,255,123,.35), inset 0 6px 20px rgba(70,255,123,.15);
+  box-shadow: 0 -8px 30px rgba(70,255,123,.35), inset 0 6px 20px rgba(70,255,123,.18), inset 0 0 40px rgba(70,255,123,.2);
   opacity: 0;
   transform: scale(0.7);
-  transition: opacity 200ms ease, transform 200ms ease;
-  z-index: 2;
+  transition: opacity 200ms ease, transform 200ms ease, filter 250ms ease;
+  z-index: 5;
+}
+
+.alien-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  /* Preenchimento da metade inferior (parte cortada) */
+  background: linear-gradient(
+    to bottom,
+    transparent 48%,
+    rgba(70,255,123,0.28) 52%,
+    rgba(70,255,123,0.45) 68%,
+    rgba(35,180,85,0.58) 100%
+  );
 }
 
 .alien-ring::after {
@@ -70,7 +108,7 @@ body {
   inset: 0;
   border-radius: 50%;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(0,60,15,0.95) 0%, rgba(0,50,10,0.85) 35%, transparent 50%);
+  background: linear-gradient(to top, rgba(30,130,55,0.7) 0%, rgba(12,90,32,0.55) 35%, transparent 55%);
 }
 
 /* Container dos ícones */
@@ -199,6 +237,21 @@ body {
   box-shadow: 0 0 35px rgba(70, 255, 123, 0.8);
 }
 
+.omni.transformado .touch {
+  border-color: rgba(70, 220, 255, 0.95);
+  background: rgba(70, 220, 255, 0.12);
+  box-shadow: 0 0 30px rgba(70, 220, 255, 0.6);
+}
+
+.omni.transformado.ready .touch {
+  box-shadow: 0 0 38px rgba(70, 220, 255, 0.9);
+}
+
+.omni.transformado.selected .touch {
+  border-color: rgba(70, 245, 255, 1);
+  box-shadow: 0 0 42px rgba(70, 245, 255, 0.95);
+}
+
 /* Efeito de ativação */
 .omni.activating {
   box-shadow: 0 0 80px 40px rgba(70,255,123,.8); /* Brilho circular uniforme */
@@ -239,6 +292,16 @@ body {
 .omni.selected .select-window::after {
   animation: scan 0.8s linear infinite;
   background: linear-gradient(90deg, transparent, rgba(70,255,123,0.8), transparent);
+}
+
+@keyframes descargaBlink {
+  0% { filter: hue-rotate(var(--tema-hue)) saturate(var(--tema-saturate)) brightness(1); }
+  100% { filter: hue-rotate(var(--tema-hue)) saturate(calc(var(--tema-saturate) * 1.2)) brightness(1.45) drop-shadow(0 0 22px rgba(var(--descarga-rgb), 0.85)); }
+}
+
+.omni.descarga-piscando .omni-bg,
+.omni.descarga-piscando .alien-ring {
+  animation: descargaBlink 180ms linear 6 alternate;
 }
 
 /* ===== KEYFRAMES ===== */
@@ -349,6 +412,22 @@ body {
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+.temas-panel {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-tema {
+  font-size: 12px;
+  padding: 8px;
+}
+
+.btn-tema.ativo {
+  background: rgba(70,255,123,0.18);
+  box-shadow: 0 0 14px rgba(70,255,123,.35);
 }
 
 .btn-rpg {
@@ -566,6 +645,7 @@ body {
 
 .omni.transformado {
   position: relative;
+  isolation: isolate;
 }
 
 .omni.transformado::before {
@@ -577,7 +657,7 @@ body {
   width: 325px;
   height: 325px;
   background-color: #46ff7b;
-  z-index: 1; /* MAIOR que a imagem */
+  z-index: -1;
   border-radius: 50%;
 }
 
@@ -589,8 +669,9 @@ body {
   background-size: 340px 340px;
   filter: none;
   opacity: 1;
-  position: relative;
-  z-index: 2; /* MENOR que o círculo */
+  position: absolute;
+  inset: 0;
+  z-index: 4;
 }
 
 
