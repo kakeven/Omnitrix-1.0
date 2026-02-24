@@ -209,7 +209,8 @@ function atualizarAparenciaOmnitrix() {
   
   if (transformado) {
     omni.classList.add('transformado');
-    
+    // Classe de supremo deve permanecer ativa enquanto modoAtual for supremo
+    omni.classList.toggle('supremo', modoAtual === 'supremo');
     // Influência externa: carga baixa
     if (carga <= 3) {
       omni.classList.add('carga-baixa');
@@ -567,10 +568,6 @@ omni.addEventListener("click", (e) => {
       if (ehSupremo) {
         playSound('supremo');
         setStatus(`SUPREMO: ${ALIEN_NAMES[selectedIndex]} | -${resultado.custo} carga, +${resultado.ganhoPilha} pilha`);
-        
-        // Efeito visual para supremo
-        omni.classList.add("supremo");
-        setTimeout(() => omni.classList.remove("supremo"), 1000);
         
       } else {
         playSound('transformar');

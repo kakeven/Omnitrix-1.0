@@ -608,12 +608,27 @@ body {
   z-index: 4;
 }
 
+
+.omni.transformado.supremo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 260px;
+  background-color: #10db4a;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+
 .omni.transformado.supremo .omni-bg {
    background: none;
   background-image: url("./images/simbolo_supremo_semBorda.png");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 340px 340px;
+  background-size: 360px 360px;
   filter: none;
   opacity: 1;
   position: absolute;
