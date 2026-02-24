@@ -61,7 +61,7 @@ body {
   opacity: 0;
   transform: scale(0.7);
   transition: opacity 200ms ease, transform 200ms ease;
-  z-index: 2;
+  z-index: 5;
 }
 
 .alien-ring::after {
@@ -566,6 +566,7 @@ body {
 
 .omni.transformado {
   position: relative;
+  isolation: isolate;
 }
 
 .omni.transformado::before {
@@ -577,7 +578,7 @@ body {
   width: 325px;
   height: 325px;
   background-color: #46ff7b;
-  z-index: 1; /* MAIOR que a imagem */
+  z-index: -1;
   border-radius: 50%;
 }
 
@@ -589,8 +590,9 @@ body {
   background-size: 340px 340px;
   filter: none;
   opacity: 1;
-  position: relative;
-  z-index: 2; /* MENOR que o círculo */
+  position: absolute;
+  inset: 0;
+  z-index: 4;
 }
 
 
