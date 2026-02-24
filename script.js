@@ -237,10 +237,8 @@ function atualizarAparenciaOmnitrix() {
 
   if (transformado) {
     omni.classList.add('transformado');
-
     // Classe de supremo deve permanecer ativa enquanto modoAtual for supremo
     omni.classList.toggle('supremo', modoAtual === 'supremo');
-
     // Influência externa: carga baixa
     if (carga <= 3) {
       omni.classList.add('carga-baixa');
@@ -380,7 +378,7 @@ function voltarFormaHumana() {
   } else {
     playSound('voltar');
   }
-  
+  atualizarAparenciaOmnitrix(); 
   setStatus("Forma humana");
   atualizarInterfaceRPG();
 }
@@ -585,6 +583,7 @@ omni.addEventListener("click", (e) => {
     const resultado = transformarRPG(selectedIndex, ehSupremo);
     
     if (!resultado.sucesso) {
+      atualizarAparenciaOmnitrix();
       setStatus(resultado.mensagem);
       return;
     }
