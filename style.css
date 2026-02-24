@@ -18,6 +18,9 @@ body {
   aspect-ratio: 1/1;
   border-radius: 50%;
   z-index: 0;
+  --tema-hue: 0deg;
+  --tema-saturate: 1;
+  --descarga-rgb: 70,255,123;
 }
 
 /* Camada de fundo */
@@ -31,6 +34,25 @@ body {
   opacity: 0.35;
   pointer-events: none;
   z-index: 0;
+}
+
+
+.omni-bg,
+.alien-ring {
+  filter: hue-rotate(var(--tema-hue)) saturate(var(--tema-saturate));
+  transition: filter 250ms ease, opacity 200ms ease, transform 200ms ease;
+}
+
+.omni.tema-ciano {
+  --tema-hue: 45deg;
+  --tema-saturate: 1.15;
+  --descarga-rgb: 70,220,255;
+}
+
+.omni.tema-roxo {
+  --tema-hue: 135deg;
+  --tema-saturate: 1.2;
+  --descarga-rgb: 180,120,255;
 }
 
 /* Anel externo */
@@ -57,7 +79,7 @@ body {
   background: radial-gradient(circle at center, rgba(0,60,15,0.9) 55%, rgb(0, 0, 0) 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 34% 109%);
   mask: radial-gradient(circle, transparent 0 34%, #000 34% 100%);
-  box-shadow: 0 -8px 30px rgba(70,255,123,.35), inset 0 6px 20px rgba(70,255,123,.15);
+  box-shadow: 0 -8px 30px rgba(70,255,123,.35), inset 0 6px 20px rgba(70,255,123,.18), inset 0 0 40px rgba(70,255,123,.2);
   opacity: 0;
   transform: scale(0.7);
   transition: opacity 200ms ease, transform 200ms ease;
@@ -254,6 +276,16 @@ body {
   background: linear-gradient(90deg, transparent, rgba(70,255,123,0.8), transparent);
 }
 
+@keyframes descargaBlink {
+  0% { filter: hue-rotate(var(--tema-hue)) saturate(var(--tema-saturate)) brightness(1); }
+  100% { filter: hue-rotate(var(--tema-hue)) saturate(calc(var(--tema-saturate) * 1.2)) brightness(1.45) drop-shadow(0 0 22px rgba(var(--descarga-rgb), 0.85)); }
+}
+
+.omni.descarga-piscando .omni-bg,
+.omni.descarga-piscando .alien-ring {
+  animation: descargaBlink 180ms linear 6 alternate;
+}
+
 /* ===== KEYFRAMES ===== */
 @keyframes selectedPulse {
   0% { transform: rotate(var(--alien-rotation)) scale(1.9); filter: drop-shadow(0 0 15px rgba(70,255,123,0.7)) brightness(1.2); }
@@ -362,6 +394,22 @@ body {
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+.temas-panel {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-tema {
+  font-size: 12px;
+  padding: 8px;
+}
+
+.btn-tema.ativo {
+  background: rgba(70,255,123,0.18);
+  box-shadow: 0 0 14px rgba(70,255,123,.35);
 }
 
 .btn-rpg {
