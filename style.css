@@ -53,8 +53,8 @@ body {
   border-radius: 50%;
   pointer-events: none;
   overflow: hidden;
-  clip-path: ellipse(100% 50% at 50% 0%);
-  background: radial-gradient(circle at center, rgba(0,60,15,0.9) 55%, rgba(0,20,5,0.95) 100%);
+  clip-path: circle(100% 50% at 50% 0%);
+  background: radial-gradient(circle at center, rgba(0,60,15,0.9) 55%, rgb(0, 0, 0) 100%);
   -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 34% 109%);
   mask: radial-gradient(circle, transparent 0 34%, #000 34% 100%);
   box-shadow: 0 -8px 30px rgba(70,255,123,.35), inset 0 6px 20px rgba(70,255,123,.15);
@@ -64,14 +64,23 @@ body {
   z-index: 5;
 }
 
+
 .alien-ring::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: 70%;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(0,60,15,0.95) 0%, rgba(0,50,10,0.85) 35%, transparent 50%);
+  background: linear-gradient(
+    to top,
+    #005415 0%,
+    #005415 45%,
+    rgba(0,84,21,0.7) 50%,
+    rgba(0,84,21,0.3) 58%,
+    transparent 65%
+  );
 }
+
 
 /* Container dos ícones */
 .aliens-container {
@@ -104,21 +113,24 @@ body {
 
 .alien-icon.in-select-window {
   transform: rotate(var(--alien-rotation)) scale(var(--escala-highlight, 1.3)) !important;
-  filter: drop-shadow(0 0 25px rgba(70, 255, 123, 1)) brightness(1.5);
+  filter: drop-shadow(0 0 25px rgba(70, 255, 123, 1)) brightness(0.85);
   z-index: 10;
   opacity: 1;
   transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+
 .alien-icon.selected {
-  transform: rotate(var(--alien-rotation)) scale(var(--escala-highlight, 1.4)) !important;
-  filter: drop-shadow(0 0 15px rgba(70, 255, 123, 0.8)) brightness(1.2) !important;
-  z-index: 20;
+  transform: rotate(var(--alien-rotation)) scale(var(--escala-highlight, 1.3)) !important;
+  filter: drop-shadow(0 0 30px rgba(70, 255, 123, 1)) brightness(0.7) contrast(1.9);
+  z-index: 10;
+  opacity: 1;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .alien-icon.near-window {
   transform: rotate(var(--alien-rotation)) scale(var(--escala-near, 1.2)) !important;
-  filter: drop-shadow(0 0 15px rgba(70, 255, 123, 0.7)) brightness(1.2);
+  filter: drop-shadow(0 0 15px rgba(70, 255, 123, 0.7)) brightness(0.75);
 }
 
 
@@ -127,7 +139,7 @@ body {
   position: absolute;
   inset: 26%;
   border-radius: 50%;
-  border: 3px solid rgba(70, 255, 123, 0.85);
+  border: 3px solid rgba(70, 255, 123, 0.5);
   background: rgba(70, 255, 123, 0.08);
   touch-action: none;
   user-select: none;
@@ -195,17 +207,17 @@ body {
 }
 
 .omni.selected .touch {
-  border-color: rgba(70, 255, 123, 1);
+  border-color: rgba(70, 255, 123, 0.5);
   box-shadow: 0 0 35px rgba(70, 255, 123, 0.8);
 }
 
 
 /* Efeito de ativação */
-.omni.activating {
-  box-shadow: 0 0 80px 40px rgba(70,255,123,.8); /* Brilho circular uniforme */
+/* .omni.activating {
+  box-shadow: 0 0 80px 40px rgba(70,255,123,.8); 
   animation: activatePulse 400ms ease;
-  border-radius: 50%; /* Garante que seja circular */
-}
+  border-radius: 50%;
+} */
 
 .omni.activating .aliens-container {
   animation: rotateOnce 400ms ease;
@@ -487,9 +499,9 @@ body {
 
 /* [data-index="3"] - Arraia-jato */
 .alien-icon[data-index="3"] {
-  --escala-base: 0.8;
+  --escala-base: 0.9;
   --escala-highlight: 1.28;
-  --escala-near: 0.9;
+  --escala-near: 1;
 }
 
 /* [data-index="4"] - XLR8 */
@@ -577,7 +589,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 325px;
-  height: 325px;
+  height: 300px;
   background-color: #10db4a;
   z-index: -1;
   border-radius: 50%;
@@ -585,7 +597,7 @@ body {
 
 .omni.transformado .omni-bg {
   background: none;
-  background-image: url("./images/omnitrix_transformado.png");
+  background-image: url("./images/omnitrix_transformado_semBorda.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 340px 340px;
@@ -596,33 +608,24 @@ body {
   z-index: 4;
 }
 
-
+.omni.transformado.supremo .omni-bg {
+   background: none;
+  background-image: url("./images/simbolo_supremo_semBorda.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 340px 340px;
+  filter: none;
+  opacity: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
 /* Brilho circular separado (se quiser) */
 /* .omni.transformado {
   box-shadow: 0 0 50px 20px rgba(70, 255, 123, 0.5);
   border-radius: 50%;
 } */
 
-@keyframes transformPulse {
-  0% { filter: hue-rotate(90deg) brightness(1.2) saturate(1.5); }
-  100% { filter: hue-rotate(100deg) brightness(1.4) saturate(1.8); }
-}
 
-/* Para influências externas (ex: quando usar supremo) */
-.omni.transformado.supremo .omni-bg {
-  filter: 
-    hue-rotate(120deg)        /* Tom mais azulado/verde */
-    brightness(1.5)           
-    saturate(2)
-    drop-shadow(0 0 30px rgba(70, 255, 255, 0.9)); /* Brilho ciano */
-  transition: filter 0.3s ease;
-}
 
-/* Estados de carga baixa (exemplo de influência externa) */
-.omni.transformado.carga-baixa .omni-bg {
-  filter: 
-    hue-rotate(90deg)
-    brightness(0.8)           
-    saturate(0.7)
-    drop-shadow(0 0 10px rgba(255, 70, 70, 0.5)); /* Brilho avermelhado */
-}
+

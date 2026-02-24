@@ -351,7 +351,7 @@ function voltarFormaHumana() {
   } else {
     playSound('voltar');
   }
-  
+  atualizarAparenciaOmnitrix(); 
   setStatus("Forma humana");
   atualizarInterfaceRPG();
 }
@@ -555,6 +555,7 @@ omni.addEventListener("click", (e) => {
     const resultado = transformarRPG(selectedIndex, ehSupremo);
     
     if (!resultado.sucesso) {
+      atualizarAparenciaOmnitrix();
       setStatus(resultado.mensagem);
       return;
     }
