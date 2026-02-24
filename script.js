@@ -12,12 +12,22 @@ const btnNovaCena = document.getElementById("btnNovaCena");
 const btnFormaHumana = document.getElementById("btnFormaHumana");
 
 const ALIEN_NAMES = [
-  "Diamante", "Friagem", "Eco Eco", "Arraia-jato", "XLR8", "Fogo Fátuo",
-  "Ameaça Aquática", "Massa Cinzenta", "Besta", "Enormossauro", "Ultra-T", "Macaco-Aranha"
+  "Diamante",      // índice 0
+  "Friagem",       // índice 1
+  "Eco Eco",       // índice 2
+  "Arraia-jato",   // índice 3
+  "XLR8",          // índice 4
+  "Fogo Fátuo",    // índice 5
+  "Ameaça Aquática", // índice 6
+  "Massa Cinzenta", // índice 7
+  "Besta",         // índice 8
+  "Enormossauro",  // índice 9
+  "Ultra-T",       // índice 10
+  "Macaco-Aranha"  // índice 11
 ];
 
 // Aliens que podem virar supremo (exemplo: os primeiros 6)
-const SUPREMO_ALIENS = [0, 1, 2, 3, 4, 5]; // Índices dos aliens que têm modo supremo
+const SUPREMO_ALIENS = [1,2,5,7,8,9,11]; // Índices dos aliens que têm modo supremo
 
 // CONFIG
 const N = 12;
@@ -46,18 +56,28 @@ let historicoAliens = []; // Registro permanente de todos aliens usados
 let ultimoClique = 0;
 let veioDeArrasto = false;
 let bloqueiaProximoClique = false;
+let lastHighlightedIndex = -1; // Guarda o último alien destacado
+
+// ===== FAIL SAFE =====
+let failSafeAtivo = false;
+let failSafeUsado = false; // Controla se já foi usado nesta sessão
+let failSafeBloqueado = false; // NOVO: bloqueio permanente se usar com negativo
+
 // ===== SONS =====
+let audioInicializado = false;
 const sons = {
   escolha: new Audio('./sounds/escolha.wav'),
   selecionado: new Audio('./sounds/selecionado.wav'),
   transformar: new Audio('./sounds/transformar.wav'),
   supremo: new Audio('./sounds/supremo.wav'),
   voltar: new Audio('./sounds/voltar.wav'),
-  voltar_tempo: new Audio('./sounds/voltar_tempo.wav')
+  voltar_tempo: new Audio('./sounds/voltar_tempo.wav'),
+  sem_carga: new Audio('./sounds/sem_carga.wav'),
+  novaCena: new Audio('/./sounds/novaCena.wav'),
 };
 
 
-let audioInicializado = false;
+
 
 function inicializarAudio() {
   if (audioInicializado) return;
@@ -75,11 +95,11 @@ function inicializarAudio() {
 
 // Configurar volume
 sons.escolha.volume = 0.3;
-sons.escolha.loop = true; // Fica em loop enquanto arrasta
-sons.selecionado.volume = 0.5;
-sons.transformar.volume = 0.6;
-sons.supremo.volume = 0.7;
-sons.voltar.volume = 0.5;
+sons.novaCena.volume = 0.2;
+sons.selecionado.volume = 0.4;
+sons.transformar.volume = 0.4;
+sons.supremo.volume = 0.4;
+sons.voltar.volume = 0.2;
 
 function playSound(nome, loop = false) {
   const som = sons[nome];
@@ -111,18 +131,95 @@ function atualizarInterfaceRPG() {
   pilhaValor.textContent = pilha;
   
   if (transformado && alienAtual !== null) {
-    alienNome.textContent = ALIEN_NAMES[alienAtual];
+    // Verifica se é supremo para mostrar o nome diferente
+    if (modoAtual === "supremo") {
+      alienNome.textContent = `${ALIEN_NAMES[alienAtual]} SUPREMO`;
+    } else {
+      alienNome.textContent = ALIEN_NAMES[alienAtual];
+    }
+    
     alienIcone.style.backgroundImage = `url('./images/aliens/alien_${alienAtual}.png')`;
     alienIcone.style.opacity = "1";
+    
+    // Tamanhos diferentes por alien no painel RPG
+    const tamanhosPainel = {
+      0: 60, // Diamante maior
+      1: 60, // Friagem
+      2: 60, // Eco Eco
+      3: 60, // Arraia-jato menor
+      4: 60, // XLR8
+      5: 60, // Fogo Fátuo
+      6: 60, // Ameaça Aquática
+      7: 60, // Massa Cinzenta bem pequeno
+      8: 60, // Besta maior
+      9: 60, // Enormossauro gigante
+      10: 60, // Ultra-T
+      11: 60, // Macaco-Aranha
+    };
+    
+    const tamanho = tamanhosPainel[alienAtual] || 60; // 60 é o padrão
+    alienIcone.style.width = tamanho + 'px';
+    alienIcone.style.height = tamanho + 'px';
+    
   } else {
     alienNome.textContent = "Humano";
     alienIcone.style.backgroundImage = "none";
     alienIcone.style.opacity = "0.5";
+    alienIcone.style.width = '60px';   // Tamanho padrão humano
+    alienIcone.style.height = '60px';
   }
 }
 
 function verificarAlienNovo(alienIndex) {
   return !historicoAliens.includes(alienIndex);
+}
+
+
+function toggleFailSafe() {
+  if (failSafeBloqueado) {
+    setStatus("🔒 Fail Safe bloqueado permanentemente!");
+    playSound('sem_carga');
+    return;
+  }
+  
+  if (failSafeUsado) {
+    setStatus("❌ Fail Safe já foi usado");
+    playSound('sem_carga');
+    return;
+  }
+  
+  failSafeAtivo = !failSafeAtivo;
+  
+  if (failSafeAtivo) {
+    setStatus("⚠️ FAIL SAFE ATIVADO - Uma transformação de emergência");
+    playSound('selecionado');
+    btnFailSafe.classList.add("ativo");
+    btnFailSafe.textContent = "⚠️ Fail Safe (ATIVO)";
+  } else {
+    setStatus("Fail Safe desativado");
+    btnFailSafe.classList.remove("ativo");
+    btnFailSafe.textContent = "⚠️ Fail Safe";
+  }
+}
+
+
+function atualizarAparenciaOmnitrix() {
+  // Remove classes de influência anteriores
+  omni.classList.remove('carga-baixa');
+  
+  if (transformado) {
+    omni.classList.add('transformado');
+    
+    // Influência externa: carga baixa
+    if (carga <= 3) {
+      omni.classList.add('carga-baixa');
+    }
+    
+    // Se for supremo, já tem a classe adicionada no momento da transformação
+    
+  } else {
+    omni.classList.remove('transformado', 'supremo', 'carga-baixa');
+  }
 }
 
 function transformarRPG(alienIndex, ehSupremo) {
@@ -135,6 +232,7 @@ function transformarRPG(alienIndex, ehSupremo) {
     alienAtual = alienIndex;
     modoAtual = "base";
     atualizarInterfaceRPG();
+    atualizarAparenciaOmnitrix(); // <-- ADICIONADO: Atualiza aparência
     return { sucesso: true, gratuito: true, mensagem: "Volta à base" };
   }
   
@@ -142,16 +240,75 @@ function transformarRPG(alienIndex, ehSupremo) {
   const custo = ehSupremo ? 3 : 1;
   const ganhoPilha = ehSupremo ? 3 : 1;
   
-  // Verifica carga
-  if (carga < custo) {
+  // ===== VERIFICAÇÕES DE BLOQUEIO =====
+  
+  // 1. Se está bloqueado permanentemente, NÃO TRANSFORMA NUNCA (mesmo com carga)
+  if (failSafeBloqueado && carga < 1) {
+    playSound('sem_carga');
+    setStatus("🔒 Sistema bloqueado permanentemente!");
+    return { sucesso: false, mensagem: "Sistema bloqueado" };
+  }
+  
+  // 2. Se já usou fail safe MAS TEM CARGA SUFICIENTE, pode transformar normal
+  //    Só bloqueia se não tiver carga suficiente
+  if (failSafeUsado && carga < custo) {
+    playSound('sem_carga');
+    setStatus("⚠️ Carga insuficiente - Use Nova Cena em forma humana");
     return { sucesso: false, mensagem: "Carga insuficiente" };
   }
   
-  // Aplica custo e ganho
-  carga -= custo;
+  // ===== VERIFICAÇÃO DE CARGA COM FAIL SAFE =====
+  if (carga < custo) {
+    // Tenta usar fail safe (só se estiver ativo)
+    if (failSafeAtivo) {
+      console.log("⚡ Usando fail safe");
+      
+      const vaiFicarNegativo = (carga - custo) < 0;
+      
+      if (vaiFicarNegativo) {
+        // USOU E FICOU NEGATIVO → BLOQUEIO PERMANENTE
+        failSafeBloqueado = true;
+        failSafeUsado = true;
+        
+        setStatus("🔒 BLOQUEADO! Uso com carga negativa");
+        playSound('sem_carga');
+        
+        // Atualiza botão
+        btnFailSafe.classList.remove("ativo");
+        btnFailSafe.classList.add("bloqueado");
+        btnFailSafe.textContent = "🔒 Bloqueado";
+        btnFailSafe.disabled = true;
+        
+      } else {
+        // USOU MAS FICOU POSITIVO
+        failSafeUsado = true;
+        
+        setStatus("⚠️ Fail Safe usado");
+        playSound('transformar');
+        
+        // Atualiza botão
+        btnFailSafe.classList.remove("ativo");
+        btnFailSafe.classList.add("usado");
+        btnFailSafe.textContent = "⏳ Usado";
+        btnFailSafe.disabled = true;
+      }
+      
+      // Aplica custo
+      carga -= custo;
+      
+    } else {
+      playSound('sem_carga');
+      return { sucesso: false, mensagem: "Carga insuficiente" };
+    }
+  } else {
+    // Carga suficiente - transformação normal
+    carga -= custo;
+  }
+  
+  // Ganho de pilha
   pilha += ganhoPilha;
   
-  // Registra no histórico se for novo alien
+  // Registra no histórico
   if (!historicoAliens.includes(alienIndex)) {
     historicoAliens.push(alienIndex);
   }
@@ -162,6 +319,8 @@ function transformarRPG(alienIndex, ehSupremo) {
   modoAtual = ehSupremo ? "supremo" : "base";
   
   atualizarInterfaceRPG();
+  atualizarAparenciaOmnitrix(); // <-- ADICIONADO: Atualiza aparência do Omnitrix
+  
   return { sucesso: true, gratuito: false, custo: custo, ganhoPilha: ganhoPilha };
 }
 
@@ -171,45 +330,55 @@ function voltarFormaHumana() {
   modoAtual = null;
   pilha = 0;
   
+  // SÓ AGORA desativa o fail safe
+  failSafeAtivo = false;
+  
+  // Se não está bloqueado permanentemente, libera
+  if (!failSafeBloqueado && failSafeUsado) {
+    failSafeUsado = false;
+    btnFailSafe.disabled = false;
+    btnFailSafe.classList.remove("usado");
+    btnFailSafe.textContent = "⚠️ Fail Safe";
+  }
+  
   // Fecha o omnitrix
   omni.classList.remove("open", "ready", "selected");
   omniState = 0;
   hasSelection = false;
   
-  if(carga==0){
+  if(carga == 0){
     playSound('voltar_tempo');
-  }else{
+  } else {
     playSound('voltar');
   }
-  atualizarInterfaceRPG();
+  
   setStatus("Forma humana");
+  atualizarInterfaceRPG();
 }
+
 function novaCena() {
   if (transformado) {
-    // Se estiver transformado: desconta pilha da carga
     carga = Math.max(0, carga - pilha);
     setStatus(`Nova cena transformado! Carga: ${carga} (${pilha} pilhas descontadas)`);
   } else {
-    // Se estiver humano: ganha +1 de carga
     if(carga<15){
       carga += 1;
       setStatus(`Nova cena em forma humana! Carga recuperada: +1 (total: ${carga})`);
     }
   }
   
-  // Não zera a pilha (ela continua acumulando)
-  // O histórico permanece
-  
-  // Verifica se carga zerou
   if (carga <= 0 && transformado) {
     setStatus("CARGA ESGOTADA! Voltando à forma humana");
     voltarFormaHumana();
   } else {
-    playSound('selecionado'); // Som temporário
+    playSound('novaCena');
+    atualizarAparenciaOmnitrix(); // <-- ADICIONE ESTA LINHA
   }
   
   atualizarInterfaceRPG();
 }
+
+
 
 // ===== CRIAÇÃO DOS ÍCONES =====
 function createAlienIcons() {
@@ -233,6 +402,7 @@ function createAlienIcons() {
     aliensContainer.appendChild(icon);
   }
 }
+
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -268,6 +438,11 @@ function updateHighlight() {
 
   if (bestDist < STEP / 2) {
     icons[bestIdx].classList.add('in-select-window');
+  
+    if (isDown && bestIdx !== lastHighlightedIndex) {
+      playSound('escolha'); // Sem loop, apenas uma vez
+      lastHighlightedIndex = bestIdx;
+    }
     
     // 2 vizinhos para cada lado
     for (let offset = 1; offset <= 2; offset++) {
@@ -278,6 +453,8 @@ function updateHighlight() {
     }
   }
 }
+
+
 
 function snapToNearest() {
   const targetAngle = Math.round(angle / STEP) * STEP;
@@ -310,6 +487,7 @@ function snapToNearest() {
 
   playSound('selecionado');
   setStatus(`Selecionado: ${ALIEN_NAMES[selectedIndex]}`);
+  
   console.log("snapToNearest - selectedIndex:", selectedIndex, "hasSelection:", hasSelection, "omniState:", omniState);
 }
 
@@ -321,22 +499,18 @@ atualizarInterfaceRPG();
 omni.addEventListener("click", (e) => {
   console.log("4. CLICK INICIADO - alvo:", e.target, "bloqueio:", bloqueiaProximoClique);
   
-  
   if (e.target.classList.contains('btn-rpg') || e.target.closest('.btn-rpg')) {
     console.log("5. Clique em botão ignorado");
     return;
   }
 
+  // Se está bloqueado, ignora MAS NÃO RESETA o hasSelection
   if (bloqueiaProximoClique) {
     console.log("6. Clique ignorado (pós-arrasto)");
-    bloqueiaProximoClique = false;
     return;
   }
 
   console.log("7. Clique permitido, continua...");
-
-  
-  
   
   if (omniState === 0) {
     omni.classList.add("open", "activating");
@@ -353,12 +527,29 @@ omni.addEventListener("click", (e) => {
     return;
   }
   
+  // IMPORTANTE: Verifica se tem seleção E está no estado correto
   if (omniState === 2 && hasSelection) {
     // Verifica se é supremo
-    const ehSupremo = transformado && 
-                    alienAtual === selectedIndex && 
-                    SUPREMO_ALIENS.includes(selectedIndex);
-  
+    let ehSupremo = false;
+    
+    if (transformado && alienAtual === selectedIndex) {
+      // Mesmo alien
+      if (modoAtual === "supremo") {
+        // Está em supremo → volta à base
+        ehSupremo = false;
+        console.log("Supremo → Base (gratuito)");
+      } else {
+        // Está em base → pode ir para supremo
+        ehSupremo = SUPREMO_ALIENS.includes(selectedIndex);
+        console.log("Base → Supremo (custa 3)");
+      }
+    } else {
+      // Alien diferente ou não transformado
+      ehSupremo = false; // Transformação normal
+      console.log("Transformação normal (custa 1)");
+    }
+    
+    console.log("TRANSFORMANDO - Alien:", selectedIndex, "Supremo?", ehSupremo);
     
     // Tenta transformar
     const resultado = transformarRPG(selectedIndex, ehSupremo);
@@ -375,17 +566,19 @@ omni.addEventListener("click", (e) => {
       if (ehSupremo) {
         playSound('supremo');
         setStatus(`SUPREMO: ${ALIEN_NAMES[selectedIndex]} | -${resultado.custo} carga, +${resultado.ganhoPilha} pilha`);
+        
+        // Efeito visual para supremo
+        omni.classList.add("supremo");
+        setTimeout(() => omni.classList.remove("supremo"), 1000);
+        
       } else {
         playSound('transformar');
         setStatus(`TRANSFORMAÇÃO: ${ALIEN_NAMES[selectedIndex]} | -${resultado.custo} carga, +${resultado.ganhoPilha} pilha`);
       }
-      
-      // Efeito visual para supremo
-      if (ehSupremo) {
-        omni.classList.add("supremo");
-        setTimeout(() => omni.classList.remove("supremo"), 1000);
-      }
     }
+    
+    // A função transformarRPG já chamou atualizarAparenciaOmnitrix()
+    // Que adiciona a classe "transformado" ao omni
     
     // Animação de transformação
     setTimeout(() => {
@@ -405,10 +598,11 @@ omni.addEventListener("click", (e) => {
 
 // ===== DRAG =====
 touch.addEventListener("pointerdown", (e) => {
-   console.log("POINTERDOWN - isDown?", isDown, "omniState:", omniState);
+  console.log("POINTERDOWN - isDown?", isDown, "omniState:", omniState);
   if (omniState !== 2) return;
-  veioDeArrasto = false;
+  
   isDown = true;
+  veioDeArrasto = false; // Adicione esta linha se não tiver
   
   omni.classList.remove("selected");
   
@@ -419,8 +613,7 @@ touch.addEventListener("pointerdown", (e) => {
   startY = e.clientY;
   baseAngle = angle;
   
-  // Inicia som de escolha em loop
-  playSound('escolha', true);
+  // SOM EM LOOP REMOVIDO - não inicia mais o som aqui
   
   touch.setPointerCapture(e.pointerId);
   e.preventDefault();
@@ -442,16 +635,23 @@ touch.addEventListener("pointerup", () => {
   console.log("1. POINTER UP - isDown:", isDown, "veioDeArrasto:", veioDeArrasto);
   if (!isDown) return;
   isDown = false;
-  stopSound('escolha');
+  
+  lastHighlightedIndex = -1;
   
   if (veioDeArrasto) {
     console.log("2. ARRASTO - chamando snapToNearest");
     snapToNearest();
     console.log("3. Ativando bloqueiaProximoClique = true");
     bloqueiaProximoClique = true;
+    
+    // Remove o bloqueio MAIS RÁPIDO (50ms é suficiente para evitar o clique fantasma)
+    setTimeout(() => {
+      bloqueiaProximoClique = false;
+      console.log("Bloqueio removido - pode clicar agora");
+    }, 50); // Reduzido de 300ms para 50ms
   } else {
     console.log("2. CLIQUE SIMPLES - NÃO vou chamar snapToNearest");
-    // Foi um clique, não faz nada
+    bloqueiaProximoClique = false;
   }
   
   veioDeArrasto = false;
@@ -473,4 +673,12 @@ btnNovaCena.addEventListener("click", (e) => {
 btnFormaHumana.addEventListener("click", (e) => {
   e.stopPropagation();  // IMPEDE que o clique chegue no omni
   voltarFormaHumana();
+});
+
+   // ===== BOTÃO FAIL SAFE =====
+const btnFailSafe = document.getElementById("btnFailSafe");
+
+btnFailSafe.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleFailSafe();
 });
