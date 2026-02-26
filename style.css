@@ -18,6 +18,11 @@ body {
   aspect-ratio: 1/1;
   border-radius: 50%;
   z-index: 0;
+  --core-color: #10db4a;
+  --core-glow: 0 0 40px rgba(70,255,123,0.4);
+  --core-intensidade: 0.8;
+  --core-animacao: none;
+  --core-brilho-interno: rgba(70,255,123,0.15);
 }
 
 /* Camada de fundo */
@@ -25,13 +30,16 @@ body {
   position: absolute;
   inset: 0;
   background-image: url("./images/omnitrix_de_frente.png");
+  
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  opacity: 0.35;
+  opacity: 0.70;
   pointer-events: none;
   z-index: 0;
 }
+
+
 
 /* Anel externo */
 .ring {
@@ -281,6 +289,15 @@ body {
   100% { left: 100%; }
 }
 
+/* pisca_cor */
+@keyframes pisca-cor {
+  0%, 100% { 
+    background: var(--core-color); 
+  }
+  50% { 
+    background: var(--core-color-alt); 
+  }
+}
 
 /* Painel RPG */
 /* Painel RPG - Responsivo */
@@ -359,30 +376,47 @@ body {
 }
 
 .botoes-rpg {
-  display: flex;
+  display: grid;
+  /* Cria 3 colunas exatamente iguais */
+  grid-template-columns: repeat(3, 1fr); 
   gap: 10px;
-  justify-content: center;
+  width: 100%;
+  padding: 5px;
 }
 
 .btn-rpg {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  /* Mantém todos do mesmo tamanho */
+  height: 55px; /* Aumentei um pouco para acomodar 2 linhas se precisar */
+  width: 100%;
+  
   background: transparent;
   border: 2px solid #46ff7b;
   color: #46ff7b;
-  padding: 10px;
+  padding: 4px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
-  font-size: 14px;
+  
+  /* Ajustes para textos longos */
+  font-size: 10px;        /* Fonte levemente menor para palavras grandes */
+  line-height: 1.2;      /* Espaçamento entre linhas caso o texto quebre */
+  word-wrap: break-word; /* Força a quebra de palavras longas */
+  hyphens: auto;         /* Adiciona hífen se necessário (suporte varia) */
+  letter-spacing: 0px;   /* Reduzi o espaçamento para ganhar espaço horizontal */
+  
   transition: all 0.2s;
-  letter-spacing: 1px;
 }
 
 .btn-rpg:hover {
   background: #46ff7b;
   color: black;
-  box-shadow: 0 0 20px #46ff7b;
+  box-shadow: 0 0 15px #46ff7b;
 }
 
 /* Ajuste da posição do status original */
@@ -431,7 +465,7 @@ body {
 
 @media (min-width: 768px) and (max-width: 1199px) {
   .rpg-panel {
-    top: -140px;
+    top: -160px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 5; /* Reduz para ficar atrás do Omnitrix */
@@ -450,7 +484,7 @@ body {
 @media (max-width: 767px) {
   .rpg-panel {
     top: auto;
-    bottom: -255px;
+    bottom: -330px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px;
@@ -582,6 +616,8 @@ body {
   isolation: isolate;
 }
 
+
+
 .omni.transformado::before {
   content: "";
   position: absolute;
@@ -590,9 +626,13 @@ body {
   transform: translate(-50%, -50%);
   width: 325px;
   height: 300px;
-  background-color: #10db4a;
-  z-index: -1;
   border-radius: 50%;
+  
+  /* cor inicial */
+  background: var(--core-color);
+  opacity: var(--core-intensidade);
+  /* animação de piscar */
+  animation: var(--core-animacao);
 }
 
 .omni.transformado .omni-bg {
@@ -617,14 +657,24 @@ body {
   transform: translate(-50%, -50%);
   width: 300px;
   height: 260px;
-  background-color: #10db4a;
+  background: var(--core-color);
+  opacity: var(--core-intensidade);
   z-index: -1;
   border-radius: 50%;
+
+
+  
+  animation: var(--core-animacao);
+  opacity: var(--core-intensidade);
+  z-index: -1;
+  border-radius: 50%;
+
 }
 
 
+
 .omni.transformado.supremo .omni-bg {
-   background: none;
+  background: none;
   background-image: url("./images/simbolo_supremo_semBorda.png");
   background-repeat: no-repeat;
   background-position: center;

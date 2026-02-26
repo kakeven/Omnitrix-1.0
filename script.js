@@ -10,6 +10,9 @@ const alienIcone = document.getElementById("alienIcone");
 const alienNome = document.getElementById("alienNome");
 const btnNovaCena = document.getElementById("btnNovaCena");
 const btnFormaHumana = document.getElementById("btnFormaHumana");
+const btnInterferencia = document.getElementById("btnInterferencia");
+const btnRadiacao = document.getElementById("btnRadiacao");
+const btnMagia = document.getElementById("btnMagia");
 
 const ALIEN_NAMES = [
   "Diamante",      // índice 0
@@ -58,10 +61,24 @@ let veioDeArrasto = false;
 let bloqueiaProximoClique = false;
 let lastHighlightedIndex = -1; // Guarda o último alien destacado
 
+//=====Botão interferencia=
+let holdTimeout = null;
+let clickTimeout = null;
+let isHolding = false;
+
+
 // ===== FAIL SAFE =====
 let failSafeAtivo = false;
 let failSafeUsado = false; // Controla se já foi usado nesta sessão
 let failSafeBloqueado = false; // NOVO: bloqueio permanente se usar com negativo
+
+
+//====== MODOS ========
+let interferencia = false;
+let radiacao = false;
+let magia = false;
+
+
 
 // ===== SONS =====
 let audioInicializado = false;
@@ -73,7 +90,8 @@ const sons = {
   voltar: new Audio('./sounds/voltar.wav'),
   voltar_tempo: new Audio('./sounds/voltar_tempo.wav'),
   sem_carga: new Audio('./sounds/sem_carga.wav'),
-  novaCena: new Audio('/./sounds/novaCena.wav'),
+  novaCena: new Audio('./sounds/novaCena.wav'),
+  destransformar: new Audio('./sounds/destransformar.wav')
 };
 
 
@@ -204,22 +222,14 @@ function toggleFailSafe() {
 
 
 function atualizarAparenciaOmnitrix() {
-  // Remove classes de influência anteriores
-  omni.classList.remove('carga-baixa');
   
   if (transformado) {
     omni.classList.add('transformado');
     // Classe de supremo deve permanecer ativa enquanto modoAtual for supremo
     omni.classList.toggle('supremo', modoAtual === 'supremo');
-    // Influência externa: carga baixa
-    if (carga <= 3) {
-      omni.classList.add('carga-baixa');
-    }
-    
-    // Se for supremo, já tem a classe adicionada no momento da transformação
     
   } else {
-    omni.classList.remove('transformado', 'supremo', 'carga-baixa');
+    omni.classList.remove('transformado', 'supremo');
   }
 }
 
@@ -326,10 +336,7 @@ function transformarRPG(alienIndex, ehSupremo) {
 }
 
 function voltarFormaHumana() {
-  transformado = false;
-  alienAtual = null;
-  modoAtual = null;
-  pilha = 0;
+  
   
   // SÓ AGORA desativa o fail safe
   failSafeAtivo = false;
@@ -342,17 +349,54 @@ function voltarFormaHumana() {
     btnFailSafe.textContent = "⚠️ Fail Safe";
   }
   
+ 
+  if(carga == 0){
+    playSound('voltar_tempo');
+    alterarEstado('normalDescarregando');
+    
+    // Toca o som de destransformar APÓS o primeiro som terminar
+    setTimeout(() => {
+      playSound('destransformar');
+      
+      // SÓ DEPOIS do segundo som, fecha o omnitrix
+      setTimeout(() => {
+        // Fecha o omnitrix
+        transformado = false;
+        alienAtual = null;
+        modoAtual = null;
+        pilha = 0;
+              
+        
+        omni.classList.remove("open", "ready", "selected");
+        omniState = 0;
+        hasSelection = false;
+        
+        setStatus("Forma humana");
+        atualizarInterfaceRPG();
+        atualizarAparenciaOmnitrix();
+      }, 800); // Aguarda o som de destransformar tocar
+      
+    }, 1800);
+    
+  } else {
+      transformado = false;
+      alienAtual = null;
+      modoAtual = null;
+      pilha = 0;
+            
+      
+      omni.classList.remove("open", "ready", "selected");
+      omniState = 0;
+      hasSelection = false;
+    playSound('voltar');
+  }
+  atualizarAparenciaOmnitrix(); 
+  
   // Fecha o omnitrix
   omni.classList.remove("open", "ready", "selected");
   omniState = 0;
   hasSelection = false;
   
-  if(carga == 0){
-    playSound('voltar_tempo');
-  } else {
-    playSound('voltar');
-  }
-  atualizarAparenciaOmnitrix(); 
   setStatus("Forma humana");
   atualizarInterfaceRPG();
 }
@@ -673,10 +717,247 @@ btnFormaHumana.addEventListener("click", (e) => {
   voltarFormaHumana();
 });
 
-   // ===== BOTÃO FAIL SAFE =====
+  // ===== BOTÃO FAIL SAFE =====
 const btnFailSafe = document.getElementById("btnFailSafe");
 
 btnFailSafe.addEventListener("click", (e) => {
   e.stopPropagation();
   toggleFailSafe();
 });
+
+  // ===== BOTÃO INTERFERENCIA =====
+btnInterferencia.addEventListener('pointerdown', () => {
+
+  isHolding = false;
+  holdTimeout = setTimeout(() => {
+    isHolding = true;
+    alterarEstado('normal');
+  }, 600);
+
+});
+
+btnInterferencia.addEventListener('pointerup', () => {
+
+  clearTimeout(holdTimeout);
+
+  // Se virou hold, não faz clique
+  if (isHolding) {
+    return;
+  }
+
+  // Detectar duplo clique
+  if (clickTimeout !== null) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+    alterarEstado('inter_pisca');
+  } else {
+
+    clickTimeout = setTimeout(() => {
+      alterarEstado('inter');
+      clickTimeout = null;
+    }, 250);
+
+  }
+
+});
+
+btnInterferencia.addEventListener('pointercancel', () => {
+  clearTimeout(holdTimeout);
+  clearTimeout(clickTimeout);
+});
+
+
+
+
+  // ===== BOTÃO RADIAÇÃO =====
+btnRadiacao.addEventListener('pointerdown', () => {
+
+  isHolding = false;
+  holdTimeout = setTimeout(() => {
+    isHolding = true;
+    alterarEstado('normal');
+  }, 600);
+
+});
+
+btnRadiacao.addEventListener('pointerup', () => {
+
+  clearTimeout(holdTimeout);
+
+  // Se virou hold, não faz clique
+  if (isHolding) {
+    return;
+  }
+
+  // Detectar duplo clique
+  if (clickTimeout !== null) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+    alterarEstado('rad_pisca');
+  } else {
+
+    clickTimeout = setTimeout(() => {
+      alterarEstado('rad');
+      clickTimeout = null;
+    }, 250);
+
+  }
+
+});
+
+btnRadiacao.addEventListener('pointercancel', () => {
+  clearTimeout(holdTimeout);
+  clearTimeout(clickTimeout);
+});
+
+
+
+
+  // ===== BOTÃO MAGIA =====
+btnMagia.addEventListener('pointerdown', () => {
+
+  isHolding = false;
+  holdTimeout = setTimeout(() => {
+    isHolding = true;
+    alterarEstado('normal');
+  }, 600);
+
+});
+
+btnMagia.addEventListener('pointerup', () => {
+
+  clearTimeout(holdTimeout);
+
+  // Se virou hold, não faz clique
+  if (isHolding) {
+    return;
+  }
+
+  // Detectar duplo clique
+  if (clickTimeout !== null) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+    alterarEstado('magi_pisca');
+  } else {
+
+    clickTimeout = setTimeout(() => {
+      alterarEstado('magi');
+      clickTimeout = null;
+    }, 250);
+
+  }
+
+});
+
+btnMagia.addEventListener('pointercancel', () => {
+  clearTimeout(holdTimeout);
+  clearTimeout(clickTimeout);
+});
+
+
+
+
+
+visuais = {
+    normal: {
+    cor: '#10db4a',
+    glow: '0 0 40px rgba(70,255,123,0.4)',
+    intensidade: 0.8
+  }
+  ,inter:{
+    cor: '#2ea0e2',
+    glow: '0 0 40px rgba(70, 243, 255, 0.4)',
+    intensidade: 0.8
+  }
+  ,inter_pisca:{
+    cor: '#2ea0e2',
+    glow: '0 0 40px rgba(70, 243, 255, 0.4)',
+    intensidade: 0.8,
+    brilhoInterno: 'radial-gradient(circle at center, rgb(30, 174, 179) 0%, #2ea0e2 50%, #7ff0ff 80%, transparent 100%)',
+    animacao: 'pulse-interno 2s ease-in-out infinite,pisca-cor 1.2s ease-in-out infinite',
+    corAlt: '#7fdcff'
+  }
+  ,rad:{
+    cor: '#e46c0a',
+    glow: '0 0 40px rgba(177, 86, 34, 0.4)',
+    intensidade: 0.8,
+  },
+  rad_pisca:{
+    cor: '#e46c0a',
+    glow: '0 0 55px rgba(255, 120, 0, 0.75)',
+    intensidade: 0.8,
+    brilhoInterno: `
+    radial-gradient(circle at center,
+  #fff8c6 0%,
+  #ffd34d 25%,
+  #ff9a00 50%,
+  #e46c0a 70%,
+  #8a3300 88%,
+  transparent 100%)`,
+    animacao: 'pulse-interno 2s ease-in-out infinite,pisca-cor 1.2s ease-in-out infinite',
+    corAlt: '#ffb347'
+  }
+  ,magi:{
+    cor: '#9621cc',
+    glow: '0 0 55px rgba(150, 33, 204, 0.75)',
+    intensidade: 0.8,
+  }
+  ,magi_pisca:{
+    cor: '#9621cc',
+    glow: '0 0 55px rgba(150, 33, 204, 0.75)',
+    intensidade: 0.8,
+    brilhoInterno: `
+    radial-gradient(circle at center,
+      #f5d9ff 0%,
+      #d78bff 25%,
+      #b14dff 50%,
+      #9621cc 70%,
+      #4a0066 88%,
+      transparent 100%)`,
+    animacao: 'pulse-interno 2s ease-in-out infinite, pisca-cor 1.2s ease-in-out infinite',
+    corAlt: '#c77dff'
+  }
+  ,normalDescarregando: {
+   cor: '#10db4a',
+
+glow: '0 0 45px rgba(16, 219, 74, 0.6)',
+
+intensidade: 0.8,
+
+brilhoInterno: `
+radial-gradient(circle at center,
+  #1eff00 0%,
+  #d9ffe8 20%,
+  #7dffb0 45%,
+  #10db4a 70%,
+  #065c1d 90%,
+  transparent 100%)`,
+
+animacao: 'pulse-interno 2s ease-in-out infinite, pisca-cor 0.4s ease-in-out infinite',
+
+corAlt: '#b6ffd2'
+}
+
+
+  }
+
+function alterarEstado(nome) {
+  const visualEscolhido = visuais[nome];  // usa "nome" pra acessar
+  
+  const omni = document.getElementById('omni');
+  omni.style.setProperty('--core-color', visualEscolhido.cor);
+  omni.style.setProperty('--core-glow', visualEscolhido.glow);
+  omni.style.setProperty('--core-intensidade', visualEscolhido.intensidade);
+
+  if (visualEscolhido.brilhoInterno) {
+    omni.style.setProperty('--core-brilho-interno', visualEscolhido.brilhoInterno);
+  }
+  
+  if (visualEscolhido.animacao) {
+    omni.offsetHeight; // força reflow
+    omni.style.setProperty('--core-animacao', visualEscolhido.animacao);
+    omni.style.setProperty('--core-color-alt', visualEscolhido.corAlt);
+  } else {
+    omni.style.setProperty('--core-animacao','none') ;
+  }
+}
