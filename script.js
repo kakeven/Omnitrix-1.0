@@ -732,6 +732,7 @@ btnInterferencia.addEventListener('pointerdown', () => {
   holdTimeout = setTimeout(() => {
     isHolding = true;
     alterarEstado('normal');
+    setStatus('Funcionamento padrão');
   }, 600);
 
 });
@@ -750,10 +751,12 @@ btnInterferencia.addEventListener('pointerup', () => {
     clearTimeout(clickTimeout);
     clickTimeout = null;
     alterarEstado('inter_pisca');
+    setStatus('Anomalia eletromagnética identificada');
   } else {
 
     clickTimeout = setTimeout(() => {
       alterarEstado('inter');
+      setStatus("Isolamento de frequência aplicado, protocolo de segurança ativado");
       clickTimeout = null;
     }, 250);
 
@@ -776,6 +779,7 @@ btnRadiacao.addEventListener('pointerdown', () => {
   holdTimeout = setTimeout(() => {
     isHolding = true;
     alterarEstado('normal');
+    setStatus("Funcionamento padrão");
   }, 600);
 
 });
@@ -794,10 +798,12 @@ btnRadiacao.addEventListener('pointerup', () => {
     clearTimeout(clickTimeout);
     clickTimeout = null;
     alterarEstado('rad_pisca');
+    setStatus('nível de radiação acima do padrão');
   } else {
 
     clickTimeout = setTimeout(() => {
       alterarEstado('rad');
+      setStatus('protocolo de proteção radiológica ativado')
       clickTimeout = null;
     }, 250);
 
@@ -820,6 +826,7 @@ btnMagia.addEventListener('pointerdown', () => {
   holdTimeout = setTimeout(() => {
     isHolding = true;
     alterarEstado('normal');
+    setStatus("Funcionamento padrão");
   }, 600);
 
 });
@@ -838,10 +845,12 @@ btnMagia.addEventListener('pointerup', () => {
     clearTimeout(clickTimeout);
     clickTimeout = null;
     alterarEstado('magi_pisca');
+    setStatus("energia não convencional identificada");
   } else {
 
     clickTimeout = setTimeout(() => {
       alterarEstado('magi');
+      setStatus("protocolo de contenção contra energia não convencional ativado");
       clickTimeout = null;
     }, 250);
 
