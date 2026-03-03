@@ -4,8 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Omnitrix - Drag Select</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="./icon-192x192.png">
 </head>
+
 <body>
 
 <div class="omni" id="omni">
@@ -48,12 +55,21 @@
       <button class="btn-rpg" id="btnInterferencia">Interferencia</button>
       <button class="btn-rpg" id="btnRadiacao">Radiação</button>
       <button class="btn-rpg" id="btnMagia">Magia</button>
-    
     </div>
   </div>
 
 </div>
 
 <script src="script.js"></script>
+
+<!-- Service Worker -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("Service Worker registrado"))
+      .catch(err => console.log("Erro no SW:", err));
+  }
+</script>
+
 </body>
 </html>
