@@ -132,14 +132,14 @@ Basta abrir o arquivo:
 index.html
 
 em qualquer navegador moderno.
-
-🎧 Observações
+```
+##🎧 Observações
 
 Navegadores podem bloquear áudio automático
 
 O som é ativado após interação do usuário
 
-📚 Documentação técnica
+##📚 Documentação técnica
 
 Para entender a estrutura interna e lógica do sistema:
 
