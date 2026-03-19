@@ -133,14 +133,15 @@ index.html
 
 em qualquer navegador moderno.
 ```
+---
 ##🎧 Observações
 
 Navegadores podem bloquear áudio automático
 
 O som é ativado após interação do usuário
-
+---
 ##📚 Documentação técnica
 
 Para entender a estrutura interna e lógica do sistema:
-
+---
 👉 Veja o arquivo GUIA_DO_CODIGO.md
