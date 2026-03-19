@@ -134,14 +134,14 @@ index.html
 em qualquer navegador moderno.
 ```
 ---
-##🎧 Observações
+## 🎧 Observações
 
-Navegadores podem bloquear áudio automático
+- Navegadores podem bloquear áudio automático
 
-O som é ativado após interação do usuário
+- O som é ativado após interação do usuário
 ---
-##📚 Documentação técnica
+## 📚 Documentação técnica
 
-Para entender a estrutura interna e lógica do sistema:
+- Para entender a estrutura interna e lógica do sistema:
+- 👉 Veja o arquivo GUIA_DO_CODIGO.md
 ---
-👉 Veja o arquivo GUIA_DO_CODIGO.md
